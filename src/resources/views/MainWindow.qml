@@ -21,9 +21,12 @@ FluentWindow {
 
     Rectangle {
         id: centralWidget
-        anchors.fill: parent
-        anchors.margins: window.visibility === Window.Windowed ? 10 : 0
-        border.width: window.visibility === Window.Windowed ? 1 : 0
+        anchors.fill: display.blindMode? undefined : parent
+        anchors.margins: display.blindMode? 0 : (window.visibility === Window.Windowed ? 10 : 0)
+        anchors.centerIn: display.blindMode? parent : undefined
+        width: display.blindMode? 200 : undefined
+        height: display.blindMode? 340 : undefined
+        border.width: display.blindMode? 1 : (window.visibility === Window.Windowed ? 1 : 0)
         border.color: "#40606060"
         color: display.colorStyle? "#e0e0e0" : "#242424"
 
@@ -35,10 +38,11 @@ FluentWindow {
 
         PageStack {
             id: pageStack
-            anchors.left: parent.left
-            anchors.top: titleBar.top
+            anchors.left: titleBar.left
+            anchors.top: titleBar.bottom
             anchors.bottom: parent.bottom
             anchors.right: titleBar.right
+            anchors.bottomMargin: window.visibility === Window.Windowed ? 1 : 0
         }
 
         TitleBar {
@@ -48,6 +52,7 @@ FluentWindow {
             anchors.right: parent.right
             anchors.topMargin: window.visibility === Window.Windowed ? 1 : 0
             anchors.rightMargin: window.visibility === Window.Windowed ? 1 : 0
+            anchors.leftMargin: window.visibility === Window.Windowed ? 1 : 0
         }
     }
 

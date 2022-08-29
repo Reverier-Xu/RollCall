@@ -14,7 +14,6 @@
 #include <QColor>
 #include <QObject>
 #include <QTimer>
-#include <QTranslator>
 
 class DisplayManager : public QObject {
     Q_OBJECT
@@ -22,6 +21,8 @@ class DisplayManager : public QObject {
                    WRITE setActiveTabIndex NOTIFY activeTabIndexChanged)
     Q_PROPERTY(bool colorStyle MEMBER mColorStyle READ colorStyle WRITE
                    setColorStyle NOTIFY colorStyleChanged)
+    Q_PROPERTY(bool blindMode MEMBER mBlindMode READ blindMode WRITE
+                   setBlindMode NOTIFY blindModeChanged)
     Q_PROPERTY(QColor themeColor MEMBER mThemeColor READ themeColor WRITE
                    setThemeColor NOTIFY themeColorChanged)
     Q_PROPERTY(QColor contentColor READ contentColor WRITE setContentColor
@@ -31,7 +32,8 @@ class DisplayManager : public QObject {
 
    private:
     int mActiveTabIndex = 0;
-    bool mColorStyle = false;
+    bool mColorStyle = true;
+    bool mBlindMode = false;
     QColor mThemeColor = QColor(0x00, 0x78, 0xd6);
     QColor mAlertColor = QColor(0xff, 0x60, 0x33);
 
@@ -39,10 +41,6 @@ class DisplayManager : public QObject {
     explicit DisplayManager(QObject *parent);
 
     ~DisplayManager() override;
-
-    void loadSettings();
-
-    void saveSettings() const;
 
     static DisplayManager *mInstance;
 
@@ -56,6 +54,10 @@ class DisplayManager : public QObject {
     [[nodiscard]] bool colorStyle() const;
 
     void setColorStyle(bool value);
+
+    [[nodiscard]] bool blindMode() const;
+
+    void setBlindMode(bool value);
 
     [[nodiscard]] QColor themeColor() const;
 
@@ -80,6 +82,8 @@ class DisplayManager : public QObject {
     void activeTabIndexChanged(int n);
 
     void colorStyleChanged(bool n);
+
+    void blindModeChanged(bool n);
 
     void themeColorChanged(QColor n);
 

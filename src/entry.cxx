@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     QApplication::setApplicationName("RollCall");
     QApplication::setOrganizationName("Wootec");
     QApplication::setOrganizationDomain("woooo.tech");
-//    QApplication::setWindowIcon(QIcon(":/assets/logo-fill.svg"));
+    QApplication::setWindowIcon(QIcon(":/assets/logo.svg"));
 #ifdef Q_OS_WINDOWS
     QApplication::setFont(QFont("Microsoft YaHei UI"));
 #endif

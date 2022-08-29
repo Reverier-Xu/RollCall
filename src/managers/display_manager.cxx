@@ -22,31 +22,9 @@ DisplayManager *DisplayManager::instance(QObject *parent) {
     return mInstance;
 }
 
-DisplayManager::DisplayManager(QObject *parent) : QObject(parent) {
-    loadSettings();
-}
+DisplayManager::DisplayManager(QObject *parent) : QObject(parent) { }
 
-DisplayManager::~DisplayManager() { saveSettings(); }
-
-void DisplayManager::loadSettings() {
-    QSettings settings;
-    settings.beginGroup("Display");
-    setThemeColor(settings.value("ThemeColor", "#0078d6").toString());
-    setAlertColor(settings.value("AlertColor", "#ff6033").toString());
-    setColorStyle(settings.value("ColorStyle", true).toBool());
-    settings.endGroup();
-}
-
-void DisplayManager::saveSettings() const {
-    QSettings settings;
-    settings.beginGroup("Display");
-    settings.setValue("ThemeColor", themeColor().name());
-    settings.setValue("AlertColor", alertColor().name());
-    settings.setValue("ColorStyle", colorStyle());
-    settings.endGroup();
-
-    settings.sync();
-}
+DisplayManager::~DisplayManager() = default;
 
 int DisplayManager::activeTabIndex() const { return mActiveTabIndex; }
 
@@ -96,3 +74,11 @@ void DisplayManager::setContentColor(const QColor &value) {
 }
 
 void DisplayManager::raiseWindow() { emit raiseWindowRequested(); }
+
+bool DisplayManager::blindMode() const {
+    return mBlindMode;
+}
+void DisplayManager::setBlindMode(bool value) {
+    mBlindMode = value;
+    emit blindModeChanged(value);
+}

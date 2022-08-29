@@ -9,6 +9,7 @@ PushArea {
     property bool noOverlay: false
     property alias icon: iconImage.source
     property int rotation: 0
+    opacity: enabled ? 1.0 : 0.5
 
     Image {
         id: iconImage

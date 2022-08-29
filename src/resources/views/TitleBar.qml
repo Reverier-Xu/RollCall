@@ -12,10 +12,10 @@ Rectangle {
             duration: 280
         }
     }
-    height: 64
+    height: display.blindMode? 32 : 64
 
     Rectangle {
-        color: display.colorStyle ? "#a0dddddd":"#d0383838"
+        color: display.colorStyle ? "#a0dddddd":"#d0323232"
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -29,13 +29,24 @@ Rectangle {
 
     PushButton {
         id: titleButton
-        icon: "qrc:/assets/simulation.svg"
-        text: "Roll Call"
+        icon: "qrc:/assets/apps.svg"
+        text: "随机点名"
         border.color: "transparent"
         flat: true
+        iconSize: 16
         height: 32
         anchors.left: parent.left
         anchors.top: parent.top
+    }
+
+    TextLabel {
+        text: "距离高考还有 " + dataMgr.timeLeft + " 天"
+        showIcon: false
+        anchors.right: parent.right
+        anchors.rightMargin: 32
+        anchors.bottom: parent.bottom
+        visible: !display.blindMode
+        height: 32
     }
 
     IconButton {
@@ -51,25 +62,14 @@ Rectangle {
         width: 48
         height: 32
         onClicked: {
-            window.close();
-        }
-    }
-
-    IconButton {
-        id: maximizeButton
-        icon: window.visibility === Window.Windowed?"qrc:/assets/maximize.svg":"qrc:/assets/restore.svg"
-        iconSize: 16
-        flat: true
-        anchors.right: closeButton.left
-        anchors.top: parent.top
-        border.color: "transparent"
-        width: 48
-        height: 32
-        onClicked: {
-            if (window.visibility === Window.Maximized || window.visibility === Window.FullScreen)
-                window.showNormal();
-            else
-                window.showMaximized();
+            if (window.visibility === Window.FullScreen) {
+                window.showNormal()
+                display.blindMode = false
+                display.colorStyle = true
+                dataMgr.enabledPlaces = 4
+            } else {
+                window.close()
+            }
         }
     }
 
@@ -78,19 +78,20 @@ Rectangle {
         icon: "qrc:/assets/minimize.svg"
         iconSize: 16
         flat: true
-        anchors.right: maximizeButton.left
+        anchors.right: closeButton.left
         anchors.top: parent.top
         border.color: "transparent"
         width: 48
         height: 32
+        visible: !display.blindMode
         onClicked: {
             window.showMinimized();
         }
     }
 
     IconButton {
-        id: colorStyleButton
-        icon: display.colorStyle ? "qrc:/assets/sun.svg" : "qrc:/assets/moon.svg"
+        id: blindModeButton
+        icon: display.blindMode? "qrc:/assets/exit-fullscreen.svg" : "qrc:/assets/enter-fullscreen.svg"
         iconSize: 16
         flat: true
         anchors.right: minimizeButton.left
@@ -98,14 +99,99 @@ Rectangle {
         border.color: "transparent"
         width: 48
         height: 32
+        visible: !display.blindMode
         onClicked: {
-            display.colorStyle = !display.colorStyle
+            display.blindMode = !display.blindMode
+            display.colorStyle = false
+            dataMgr.enabledPlaces = 1
+            display.activeTabIndex = 0
+            indicator.state = "randomPage"
+            window.showFullScreen()
         }
     }
 
-    TapHandler {
-        onTapped: if (tapCount === 2) toggleMaximized();
-        gesturePolicy: TapHandler.DragThreshold
+    PushButton {
+        id: randomPageButton
+        text: "点名"
+        border.color: "transparent"
+        flat: true
+        showIcon: false
+        height: 32
+        width: 72
+        visible: !display.blindMode
+        anchors.left: parent.left
+        anchors.leftMargin: 32
+        anchors.bottom: parent.bottom
+        onClicked: {
+            display.activeTabIndex = 0
+            indicator.state = "randomPage"
+        }
+    }
+
+    PushButton {
+        id: settingPageButton
+        text: "设置"
+        border.color: "transparent"
+        flat: true
+        showIcon: false
+        height: 32
+        width: 72
+        visible: !display.blindMode
+        anchors.left: randomPageButton.right
+        anchors.bottom: parent.bottom
+        onClicked: {
+            display.activeTabIndex = 1
+            indicator.state = "settingPage"
+        }
+    }
+
+    PushButton {
+        id: aboutPageButton
+        text: "关于"
+        border.color: "transparent"
+        flat: true
+        showIcon: false
+        height: 32
+        width: 72
+        visible: !display.blindMode
+        anchors.left: settingPageButton.right
+        anchors.bottom: parent.bottom
+        onClicked: {
+            display.activeTabIndex = 2
+            indicator.state = "aboutPage"
+        }
+    }
+
+    Rectangle {
+        id: indicator
+        color: display.themeColor
+        height: 4
+        width: 32
+        visible: !display.blindMode
+        anchors.bottom: parent.bottom
+        state: "randomPage"
+
+        states: [
+            State {
+                name: "randomPage"
+                AnchorChanges { target: indicator; anchors.horizontalCenter: randomPageButton.horizontalCenter }
+            },
+            State {
+                name: "settingPage"
+                AnchorChanges { target: indicator; anchors.horizontalCenter: settingPageButton.horizontalCenter }
+            },
+            State {
+                name: "aboutPage"
+                AnchorChanges { target: indicator; anchors.horizontalCenter: aboutPageButton.horizontalCenter }
+            }
+        ]
+
+        transitions: Transition {
+            AnchorAnimation {
+                duration: 240
+                easing.type: Easing.OutExpo
+            }
+        }
     }
 
     DragHandler {
@@ -113,18 +199,6 @@ Rectangle {
         onActiveChanged: {
             if (active) {
                 window.startSystemMove();
-            }
-        }
-    }
-
-    HoverHandler {
-        onHoveredChanged: {
-            if (hovered) {
-                // console.log("hovered");
-                display.blockDelayedHide();
-            } else {
-                // console.log("unhovered");
-                display.delayedHide();
             }
         }
     }

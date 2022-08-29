@@ -16,6 +16,7 @@
 #include <QQmlContext>
 
 #include "display_manager.h"
+#include "data_manager.h"
 
 GuiManager *GuiManager::mInstance = nullptr;
 
@@ -31,6 +32,8 @@ void GuiManager::createUI() {
 void GuiManager::exportManagers() {
     mUiEngine->rootContext()->setContextProperty(
         "display", DisplayManager::instance(this->parent()));
+    mUiEngine->rootContext()->setContextProperty(
+        "dataMgr", DataManager::instance(this->parent()));
 }
 
 GuiManager *GuiManager::instance(QObject *parent) {
