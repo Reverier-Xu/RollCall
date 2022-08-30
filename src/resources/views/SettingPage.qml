@@ -49,6 +49,32 @@ Rectangle {
         }
     }
 
+    TextLabel {
+        id: dateTitle
+        text: "毕业日期"
+        icon: "qrc:/assets/shifts.svg"
+        height: 32
+        anchors.topMargin: 16
+        anchors.top: enterEditButton.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: 16
+
+    }
+
+    InputBox {
+        id: dateInput
+        placeholder: "yyyy-MM-dd"
+        height: 32
+        width: 300
+        anchors.top: dateTitle.bottom
+        anchors.left: parent.left
+        anchors.leftMargin: 32
+        inputText: dataMgr.endDateRaw
+        onInputFinished: {
+            dataMgr.endDateRaw = inputText
+        }
+    }
+
     ListView {
         id: list
         clip: true
@@ -87,6 +113,10 @@ Rectangle {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 40
+            inputText: dataMgr.studentListRaw
+            onInputEdited: {
+                dataMgr.studentListRaw = input
+            }
         }
 
         PushButton {
@@ -97,6 +127,10 @@ Rectangle {
             anchors.right: parent.right
             icon: "qrc:/assets/archive.svg"
             text: "保存"
+            onClicked: {
+                dataMgr.syncWithRawString()
+                root.inEdit = false
+            }
         }
     }
 }

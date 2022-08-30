@@ -22,13 +22,17 @@ class DataManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(qint64 timeLeft READ timeLeft WRITE setTimeLeft NOTIFY timeLeftChanged)
     Q_PROPERTY(QDate endDate READ endDate WRITE setEndDate NOTIFY endDateChanged)
+    Q_PROPERTY(QString endDateRaw READ endDateRaw WRITE setEndDateRaw NOTIFY endDateRawChanged)
     Q_PROPERTY(int enabledPlaces READ enabledPlaces WRITE setEnabledPlaces NOTIFY enabledPlacesChanged)
+    Q_PROPERTY(QString studentListRaw READ studentListRaw WRITE setStudentListRaw NOTIFY studentListRawChanged)
    private:
     QDate mEndDate{};
+    QString mEndDateRaw = "";
     QList<Student> mStudentList;
     QList<Student> mLastList;
     QList<Student> mHistory;
     int mEnabledPlaces = 4;
+    QString mStudentListRaw = "";
 
     QTimer* syncTimer;
     QMutex randomMutex;
@@ -55,19 +59,33 @@ class DataManager : public QObject {
 
     void setEndDate(QDate date);
 
+    [[nodiscard]] QString endDateRaw() const;
+
+    void setEndDateRaw(const QString& date);
+
     [[nodiscard]] int enabledPlaces() const;
 
     void setEnabledPlaces(int n);
 
+    [[nodiscard]] QString studentListRaw() const;
+
+    void setStudentListRaw(const QString& n);
+
    public slots:
     Q_INVOKABLE QVariantMap getRandomStudent();
+
+    Q_INVOKABLE void syncWithRawString();
 
    signals:
     void timeLeftChanged(qint64 timeLeft);
 
     void endDateChanged(QDate endDate);
 
+    void endDateRawChanged(QString endDateRaw);
+
     void chosenListChanged(const QStringList &list);
 
     void enabledPlacesChanged(int n);
+
+    void studentListRawChanged(const QString& n);
 };

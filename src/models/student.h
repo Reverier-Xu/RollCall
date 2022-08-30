@@ -31,7 +31,7 @@ class Student : public QObject {
 
     Student &operator=(const Student &student);
 
-    bool operator==(const Student& another);
+    bool operator==(const Student& another) const;
 
     ~Student() override = default;
 
@@ -42,6 +42,8 @@ class Student : public QObject {
     Q_INVOKABLE [[nodiscard]] QString name() const;
 
     Q_INVOKABLE void setName(const QString& n);
+
+    static QList<Student> getListFromString(const QString& str);
 
    signals:
     void noChanged(int n);

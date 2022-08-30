@@ -100,7 +100,7 @@ Rectangle {
     }
 
     onLoadingChanged: {
-        if (!loading) {
+        if (!loading && enabled) {
             let student = dataMgr.getRandomStudent()
             displayNum = student["no"]
             displayName = student["name"]

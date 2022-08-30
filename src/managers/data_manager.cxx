@@ -15,14 +15,14 @@
 #include <QtCore>
 #include <exception>
 
-QString readUnicodeStringFromFile(const QString& path) {
+QString readUnicodeStringFromFile(const QString &path) {
     auto file = QFile(path);
     auto ok = file.open(QFile::ReadOnly);
     if (ok) {
         auto data = file.readAll();
         QTextCodec::ConverterState state;
-        QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-        QString text = codec->toUnicode(data.data(), 20, &state);
+        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+        codec->toUnicode(data.data(), 10, &state);
         if (state.invalidChars) {
             return QTextCodec::codecForName("GBK")->toUnicode(data);
         } else {
@@ -62,23 +62,23 @@ void DataManager::loadData() {
         try {
             auto date = readUnicodeStringFromFile(filepath + "/data/end_date.txt");
             mEndDate = QDate::fromString(date, "yyyy-MM-dd");
-        } catch (std::exception&) {
+        } catch (std::exception &) {
             mEndDate = QDate().addDays(-1);
         }
     } else {
         mEndDate = QDate().addDays(-1);
     }
     if (QFile::exists(filepath + "/data/students.txt")) {
-        auto students = QString(readUnicodeStringFromFile(filepath + "/data/students.txt")).trimmed().split('\n');
-        for (int i = 0; i < students.length(); i++) {
-            mStudentList.append(Student(nullptr, i + 1, students[i].trimmed()));
-        }
+        auto studentListRawStr = readUnicodeStringFromFile(filepath + "/data/students.txt");
+        mStudentList = Student::getListFromString(studentListRawStr);
+        mStudentListRaw = studentListRawStr;
     }
     if (QFile::exists(filepath + "/data/cache.txt")) {
         auto students = QString(readUnicodeStringFromFile(filepath + "/data/cache.txt")).trimmed().split('\n');
         for (auto &student : students) {
             auto studentInfo = student.split(' ');
-            mLastList.append(Student(nullptr, QString(studentInfo[0]).toInt(), studentInfo[1].trimmed()));
+            if (studentInfo.length() == 2)
+                mLastList.append(Student(nullptr, QString(studentInfo[0]).toInt(), studentInfo[1].trimmed()));
         }
     }
     studentListModel.reload();
@@ -140,4 +140,40 @@ QVariantMap DataManager::getRandomStudent() {
     }
     syncTimer->start();
     return resMap;
+}
+
+QString DataManager::studentListRaw() const {
+    return mStudentListRaw;
+}
+
+void DataManager::setStudentListRaw(const QString &n) {
+    mStudentListRaw = n;
+    emit studentListRawChanged(studentListRaw());
+}
+
+void DataManager::syncWithRawString() {
+    mStudentList = Student::getListFromString(studentListRaw());
+    mLastList.clear();
+    studentListModel.reload();
+    QFile file(QDir::currentPath() + "/data/students.txt");
+    file.open(QFile::WriteOnly);
+    file.write(studentListRaw().toUtf8());
+    file.close();
+    QFile::remove(QDir::currentPath() + "/data/cache.txt");
+}
+QString DataManager::endDateRaw() const {
+    return mEndDate.toString("yyyy-MM-dd");
+}
+void DataManager::setEndDateRaw(const QString& date) {
+    try {
+        mEndDate = QDate::fromString(date, "yyyy-MM-dd");
+        emit endDateChanged(endDate());
+        emit timeLeftChanged(timeLeft());
+        QFile file(QDir::currentPath() + "/data/end_date.txt");
+        file.open(QFile::WriteOnly);
+        file.write(date.toUtf8());
+        file.close();
+    } catch (std::exception&) {
+        mEndDate = QDate().addDays(-1);
+    }
 }

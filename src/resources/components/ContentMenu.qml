@@ -14,10 +14,15 @@ Menu {
         border.width: 1
         border.color: display.colorStyle? "#cccccc":"#101010"
         radius: 0
-        color: display.colorStyle? "#c0c0c0":"#303030"
+        color: display.colorStyle? "#e0e0e0":"#303030"
         implicitWidth: 200
         implicitHeight: 40
     }
+
+    topPadding: 0
+    bottomPadding: 0
+    leftPadding: 0
+    rightPadding: 0
 
     contentItem: ListView {
         id: contentMenuList

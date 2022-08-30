@@ -42,6 +42,15 @@ void Student::setName(const QString &n) {
     emit nameChanged(n);
 }
 
-bool Student::operator==(const Student &another) {
+bool Student::operator==(const Student &another) const {
     return another.no() == this->no();
+}
+
+QList<Student> Student::getListFromString(const QString &str) {
+    QList<Student> list;
+    auto students = str.trimmed().split('\n');
+    for (int i = 0; i < students.length(); i++) {
+        list.append(Student(nullptr, i + 1, students[i].trimmed()));
+    }
+    return list;
 }
