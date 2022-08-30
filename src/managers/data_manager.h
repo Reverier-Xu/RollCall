@@ -3,28 +3,35 @@
  * @author Reverier-Xu (reverier.xu@xdsec.club)
  * @brief 
  * @version 0.1
- * @date 22-8-29
+ * @date 2022-08-29
  *
  * @copyright 2022 Wootec
  */
 
 #pragma once
 
-#include <QColor>
 #include <QObject>
-#include <QTimer>
 #include <QDate>
+#include <QMap>
+#include <QTimer>
+#include <QMutex>
+#include "models/student.h"
+#include "models/student_list.h"
 
 class DataManager : public QObject {
     Q_OBJECT
     Q_PROPERTY(qint64 timeLeft READ timeLeft WRITE setTimeLeft NOTIFY timeLeftChanged)
     Q_PROPERTY(QDate endDate READ endDate WRITE setEndDate NOTIFY endDateChanged)
-    Q_PROPERTY(QStringList chosenList READ chosenList WRITE setChosenList NOTIFY chosenListChanged)
     Q_PROPERTY(int enabledPlaces READ enabledPlaces WRITE setEnabledPlaces NOTIFY enabledPlacesChanged)
    private:
     QDate mEndDate{};
-    QStringList mChosenList{};
+    QList<Student> mStudentList;
+    QList<Student> mLastList;
+    QList<Student> mHistory;
     int mEnabledPlaces = 4;
+
+    QTimer* syncTimer;
+    QMutex randomMutex;
 
    protected:
     explicit DataManager(QObject *parent);
@@ -36,6 +43,8 @@ class DataManager : public QObject {
     static DataManager *mInstance;
 
    public:
+    StudentListModel studentListModel{};
+
     static DataManager *instance(QObject *parent = nullptr);
 
     [[nodiscard]] qint64 timeLeft() const;
@@ -46,15 +55,14 @@ class DataManager : public QObject {
 
     void setEndDate(QDate date);
 
-    [[nodiscard]] QStringList chosenList() const;
-
-    void setChosenList(const QStringList &list);
-
     [[nodiscard]] int enabledPlaces() const;
 
     void setEnabledPlaces(int n);
 
-    signals:
+   public slots:
+    Q_INVOKABLE QVariantMap getRandomStudent();
+
+   signals:
     void timeLeftChanged(qint64 timeLeft);
 
     void endDateChanged(QDate endDate);

@@ -22,4 +22,6 @@ class AppManager : public QObject {
 
     void initialize();
 
+    static void registerTypes();
+
 };

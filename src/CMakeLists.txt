@@ -12,8 +12,12 @@ set(MANAGER_SRCS
     managers/gui_manager.cxx
     managers/gui_manager.h managers/data_manager.cxx managers/data_manager.h)
 
+set(MODELS_SRCS
+        models/student.cxx
+        models/student.h models/student_list.cxx models/student_list.h)
+
 set(SRCS
-    ${MANAGER_SRCS}
+    ${MANAGER_SRCS} ${MODELS_SRCS}
     entry.cxx)
 
 add_executable(RollCall

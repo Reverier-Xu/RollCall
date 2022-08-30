@@ -29,7 +29,7 @@ Rectangle {
 
     PushButton {
         id: titleButton
-        icon: "qrc:/assets/apps.svg"
+        icon: "qrc:/assets/logo.svg"
         text: "随机点名"
         border.color: "transparent"
         flat: true
@@ -40,12 +40,13 @@ Rectangle {
     }
 
     TextLabel {
-        text: "距离高考还有 " + dataMgr.timeLeft + " 天"
+        text: dataMgr.timeLeft > 0 ? "距离高考还有 " + dataMgr.timeLeft + " 天" : "倒计时没配置呢"
         showIcon: false
         anchors.right: parent.right
         anchors.rightMargin: 32
         anchors.bottom: parent.bottom
         visible: !display.blindMode
+        opacity: dataMgr.timeLeft > 0 ? 1 : 0.5
         height: 32
     }
 

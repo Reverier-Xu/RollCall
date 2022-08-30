@@ -1,9 +1,9 @@
 /**
- * @file gui_manager.cpp
+ * @file gui_manager.cxx
  * @author Reverier-Xu (reverier.xu@outlook.com)
  * @brief
  * @version 0.1
- * @date 2021-12-08
+ * @date 2022-08-30
  *
  * @copyright Copyright (c) 2021 Wootec
  *
@@ -34,6 +34,8 @@ void GuiManager::exportManagers() {
         "display", DisplayManager::instance(this->parent()));
     mUiEngine->rootContext()->setContextProperty(
         "dataMgr", DataManager::instance(this->parent()));
+    mUiEngine->rootContext()->setContextProperty(
+        "studentList", &(DataManager::instance(this->parent())->studentListModel));
 }
 
 GuiManager *GuiManager::instance(QObject *parent) {

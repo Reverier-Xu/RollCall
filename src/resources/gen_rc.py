@@ -2,14 +2,13 @@
 
 import os
 
-
 folders = ['assets', 'components', 'views']
 qrc_content_start = \
-'''<RCC>
+    '''<RCC>
     <qresource prefix="/">
 '''
 qrc_content_end = \
-'''    </qresource>
+    '''    </qresource>
 </RCC>
 '''
 
@@ -24,4 +23,3 @@ print(qrc_content)
 
 with open('main.qrc', 'w') as out:
     out.write(qrc_content)
-

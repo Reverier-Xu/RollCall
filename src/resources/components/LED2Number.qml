@@ -1,14 +1,15 @@
 import QtQuick 2.15
+import QtQml 2.15
 
 Rectangle {
     id: root
     color: "transparent"
 
     property int displayNum: 0
-    property string displayName: "未知"
+    property string displayName: "- - -"
     property bool loading: false
 
-    opacity: enabled ? 1 : 0.5
+    opacity: enabled ? 1 : 0.3
 
     Timer {
         id: timer
@@ -85,6 +86,24 @@ Rectangle {
                 duration: 300
                 easing.type: Easing.OutQuad
             }
+        }
+    }
+
+    onEnabledChanged: {
+        if (!enabled) {
+            displayNum = 0
+            displayName = "- - -"
+        } else {
+            displayNum = 0
+            displayName = "- - -"
+        }
+    }
+
+    onLoadingChanged: {
+        if (!loading) {
+            let student = dataMgr.getRandomStudent()
+            displayNum = student["no"]
+            displayName = student["name"]
         }
     }
 }
